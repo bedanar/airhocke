@@ -1,7 +1,7 @@
 from vector_math import *
 
 class Movement:
-    def __init__(self, x=10 ** -12, y=10 ** -13):
+    def __init__(self, x=10 ** -9, y=10 ** -8):
         self.x, self.y = x, y
         self.koef = 1
 
@@ -26,13 +26,12 @@ class Movement:
         return self
 
     def connect(self, over, first_center, second_center):
-        # print("self before", self, end=' ')
         before = self
         self.set(*calculate_rez_vector(normal_vector(first_center, second_center, Movement()), self).get_info())
         if self == before:
             mult_vector(-1, self)
         self.set(*(self + over).get_info())
-        mult_vector(1.01, self)
+        mult_vector(1.06, self)
         self.x, self.y = min(30, self.x), min(30, self.y)
         return self
 
