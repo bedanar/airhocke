@@ -262,13 +262,13 @@ def online(pygame):
 
 
     connected = Networking(37020)
-    print(opponent_ip)
     connected.bind()    
     def predicate(data):
         if not data:
             return False
         return data['pid'] == opponent_pid and data['to'] == my_pid
     past_score = [-1, -1]
+    data = 'hello'
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -312,6 +312,13 @@ def online(pygame):
                 mouse_pos = event.pos
 
                 if return_to_menu.is_clicked(mouse_pos):
+                    counter = 100000
+                    while counter:
+                        counter -= 1
+                        connected.send_json({
+                        'error': "Your opponent has left the game",
+                    }, opponent_ip)
+
                     return 0
 
         screen.fill((0, 0, 0))
@@ -339,17 +346,21 @@ def online(pygame):
                 'my_coords': my_player.get_coords(),
                 'puck_coords': puck.coords,
                 "score": (my_score, opponent_score),
+                'error': -1,
             }, opponent_ip)
         else:
             connected.send_json({
                 'pid': my_pid,
                 'to': opponent_pid,
                 'my_vector': my_player.movement.get(),
+                'error': -1,
             }, opponent_ip)
-        
+        last_data = data
         data = connected.recv_json_until(predicate=predicate, timeout=0.02)[0]
+        if data['error'] != -1:
+            return result_screen(pygame, data['error'])
         if not data:
-            continue
+            data = last_data
         # print(data)
         # data = json.loads(data)
 
@@ -424,7 +435,9 @@ def online(pygame):
             
         if max(my_score, opponent_score) >= 11:
             if make_rules:
-                while 100000:
+                counter = 100000
+                while counter:
+                    counter -= 1
                     connected.send_json({
                         'pid': my_pid,
                         'to': opponent_pid,
