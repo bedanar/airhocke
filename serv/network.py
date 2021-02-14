@@ -64,6 +64,7 @@ class Networking:
         t0 = time.monotonic()
         while time.monotonic() < t0 + timeout:
             data, addr = self.recv_json()
+            # print(data, addr)
             if predicate(data):
                 return data, addr
         return None, None

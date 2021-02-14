@@ -255,7 +255,9 @@ def online(pygame):
     print(opponent)
     make_rules = (opponent['my'] > opponent['enemy'][1])
     opponent_ip = opponent['enemy'][0][0]
-
+    opponent_pid = opponent['enemy'][1]
+    my_pid = opponent['my']
+    print(opponent_ip, opponent_pid)
     ######################################################################################
     ######################################################################################
     ######################################################################################
@@ -266,8 +268,12 @@ def online(pygame):
     fps = 120
     clock = pygame.time.Clock()
     first_coef, second_coef = 1, 1
-    my_player = Player([width / 4, height / 2], 50, 1, height, width)
-    opponent_player = Player([3 * width / 4, height / 2], 50, 0, height, width)
+    if make_rules:
+        my_player = Player([width / 4, height / 2], 50, 1, height, width)
+        opponent_player = Player([3 * width / 4, height / 2], 50, 0, height, width)
+    else:
+        opponent_player = Player([width / 4, height / 2], 50, 1, height, width)
+        my_player = Player([3 * width / 4, height / 2], 50, 0, height, width)
     puck = Puck([width / 2 + 95, height / 2] if randint(0, 1) else [width / 2 - 95, height / 2], [my_player, opponent_player], 25, height, width)
     my_score, opponent_score = 0, 0
     main_font = pygame.font.Font(None, 36)
@@ -282,8 +288,12 @@ def online(pygame):
 
     connected = Networking(37020)
     print(opponent_ip)
-    connected.bind(opponent_ip)
-
+    connected.bind()    
+    def predicate(data):
+        if not data:
+            return False
+        return data['pid'] == opponent_pid and data['to'] == my_pid
+    past_score = [-1, -1]
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -348,6 +358,8 @@ def online(pygame):
         '''
         if make_rules:
             connected.send_json({
+                'pid': my_pid,
+                'to': opponent_pid,
                 'your_coords': opponent_player.get_coords(),
                 'my_coords': my_player.get_coords(),
                 'puck_coords': puck.coords,
@@ -355,70 +367,95 @@ def online(pygame):
             }, opponent_ip)
         else:
             connected.send_json({
+                'pid': my_pid,
+                'to': opponent_pid,
                 'my_vector': my_player.movement.get(),
             }, opponent_ip)
-        data = connected.recv_json()
-        print(data)
-        # if make_rules:
-        #     opponent_player.movement = tuple(data['my_vector'])
-        # else:
-
         
+        data = connected.recv_json_until(predicate=predicate, timeout=0.1)
 
 
-        # rez = puck.check_goal()
-        # if rez:
-        #     if rez == 1:
-        #         puck.coords = width / 2, height / 2
-        #         puck.movement.set(0, 0)
-        #         first_score += 1
-        #         puck.coords = [width / 2 + 95, height / 2]
 
-        #     if rez == 2:
-        #         puck.coords = width / 2, height / 2
-        #         puck.movement.set(0, 0)
-        #         second_score += 1
+        if animation_color != [255, 255, 255, 255]:
+            for i in range(3):
+                animation_color[i] += 5
+            animation_radius += (25 - puck_radius) / (200 / 5)
+            clock.tick(100)
+        else:
+            is_animated = 0
 
-        #         puck.coords = [width / 2 - 95, height / 2]
 
-        #     is_animated = 1
-        #     animation_color = [55, 55, 55, 255]
-        #     animation_radius = 50
-        #     first.coords = [width / 4, height / 2]
-        #     second.coords = [3 * width / 4, height / 2]
-        # if max(first_score, second_score) >= 11:
-        #     if first_score > second_score:
-        #         return result(pygame, "Red player won")
-        #     else:
-        #         return result(pygame, "Blue player won")
+        if make_rules:
+            opponent_player.movement = Movement(*data['my_vector'])
+            rezult = puck.check_goal()
+            if rezult:
+                if rezult == 1:
+                    puck.coords = width / 2, height / 2
+                    puck.movement.set(0, 0)
+                    my_score += 1
+                    puck.coords = [width / 2 + 95, height / 2]
 
-        # if animation_color != [255, 255, 255, 255]:
-        #     for i in range(3):
-        #         animation_color[i] += 5
-        #     animation_radius += (25 - puck_radius) / (200 / 5)
-        #     clock.tick(100)
-        # else:
-        #     is_animated = 0
+                if rezult == 2:
+                    puck.coords = width / 2, height / 2
+                    puck.movement.set(0, 0)
+                    opponent_score += 1
+                    puck.coords = [width / 2 - 95, height / 2]
 
-        # '''
-        #     rewriting objects
-        # '''
-        # if is_animated:
-        #     pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen, pygame.Color(*animation_color), animation_radius))
-        #     pygame.draw.circle(*first.draw_info(screen))
-        #     pygame.draw.circle(*second.draw_info(screen))
-        # else:
-        #     pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen))
-        #     pygame.draw.circle(*first.change_coords().draw_info(screen))
-        #     pygame.draw.circle(*second.change_coords().draw_info(screen))
+                is_animated = 1
+                animation_color = [55, 55, 55, 255]
+                animation_radius = 50
+                my_player.coords = [width / 4, height / 2]
+                opponent_player.coords = [3 * width / 4, height / 2]
+                continue
+                '''
+                    rewriting objects
+                '''
+                if is_animated:
+                    pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen, pygame.Color(*animation_color), animation_radius))
+                    pygame.draw.circle(*my_player.draw_info(screen))
+                    pygame.draw.circle(*opponent_player.draw_info(screen))
+                else:
+                    pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen))
+                    pygame.draw.circle(*my_player.change_coords().draw_info(screen))
+                    pygame.draw.circle(*opponent_player.change_coords().draw_info(screen))
+        else:
 
-        # first_score_object = main_font.render(str(first_score), True, WHITE)
-        # second_score_object = main_font.render(str(second_score), True, WHITE)
-        # screen.blit(first_score_object, (width / 2 - 40, 10))
-        # screen.blit(second_score_object, (width / 2 + 30, 10))
-        # return_to_menu.draw("Menu", 20, pygame=pygame, screen=screen)
-        # clock.tick(fps)
-        # pygame.display.flip()
+            my_player.coords = data['your_coords']
+            
+
+            opponent_player.coords = data['my_coords']
+            puck.coords = data['puck_coords']
+            opponent_score, my_score = data['score']
+            if past_score != data['score']:
+                past_score = data['score']
+                is_animated = 1
+                animation_color = [55, 55, 55, 255]
+                animation_radius = 50
+                my_player.coords = [width / 4, height / 2]
+                opponent_player.coords = [3 * width / 4, height / 2]
+            if is_animated:
+                pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen, pygame.Color(*animation_color), animation_radius))
+                pygame.draw.circle(*my_player.draw_info(screen))
+                pygame.draw.circle(*opponent_player.draw_info(screen))
+            else:
+                pygame.draw.circle(*puck.draw_info(screen))
+                pygame.draw.circle(*my_player.draw_info(screen))
+                pygame.draw.circle(*opponent_player.draw_info(screen))
+            
+        if max(my_score, opponent_score) >= 11:
+            del connected
+            if my_score > opponent_score:
+                return result(pygame, "You're won")
+            else:
+                return result(pygame, "You're lose")
+
+        first_score_object = main_font.render(str(first_score), True, WHITE)
+        second_score_object = main_font.render(str(second_score), True, WHITE)
+        screen.blit(first_score_object, (width / 2 - 40, 10))
+        screen.blit(second_score_object, (width / 2 + 30, 10))
+        return_to_menu.draw("Menu", 20, pygame=pygame, screen=screen)
+        clock.tick(fps)
+        pygame.display.flip()
     return 0
     ######################################################################################
     ######################################################################################
