@@ -8,6 +8,7 @@ import threading
 import concurrent.futures
 from multiprocessing.pool import ThreadPool
 from serv.network import Networking
+import json
 
 def two_in_one(pygame):
     pygame.display.set_caption('Hockey')
@@ -116,9 +117,9 @@ def two_in_one(pygame):
             second.coords = [3 * width / 4, height / 2]
         if max(first_score, second_score) >= 11:
             if first_score > second_score:
-                return result(pygame, "Red player won")
+                return result_screen(pygame, "Red player won")
             else:
-                return result(pygame, "Blue player won")
+                return result_screen(pygame, "Blue player won")
 
         if animation_color != [255, 255, 255, 255]:
             for i in range(3):
@@ -190,32 +191,6 @@ def game_intro(pygame):
         pygame.display.update()
         clock.tick(fps)
 
-
-def result(pygame, rez):
-
-    pygame.display.set_caption('Hockey')
-    size = 1000, 600
-    screen = pygame.display.set_mode(size)
-    running = True
-    fps = 120
-    clock = pygame.time.Clock()
-    return_to_menu = Button(465, 540, 65, 50)
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                return 1000
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = event.pos 
-                if return_to_menu.is_clicked(mouse_pos):
-                    return 0
-
-        screen.fill((0, 0, 0))
-        write_text(rez, (355, 250), 30, pygame, screen, color=WHITE)
-        return_to_menu.draw("Menu", 20, pygame, screen)
-        pygame.display.update()
-        clock.tick(fps)
 
 
 def online(pygame):
@@ -372,8 +347,11 @@ def online(pygame):
                 'my_vector': my_player.movement.get(),
             }, opponent_ip)
         
-        data = connected.recv_json_until(predicate=predicate, timeout=0.1)
-
+        data = connected.recv_json_until(predicate=predicate, timeout=0.02)[0]
+        if not data:
+            continue
+        # print(data)
+        # data = json.loads(data)
 
 
         if animation_color != [255, 255, 255, 255]:
@@ -386,6 +364,7 @@ def online(pygame):
 
 
         if make_rules:
+            # print('I"m a big boss')
             opponent_player.movement = Movement(*data['my_vector'])
             rezult = puck.check_goal()
             if rezult:
@@ -407,17 +386,18 @@ def online(pygame):
                 my_player.coords = [width / 4, height / 2]
                 opponent_player.coords = [3 * width / 4, height / 2]
                 continue
-                '''
-                    rewriting objects
-                '''
-                if is_animated:
-                    pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen, pygame.Color(*animation_color), animation_radius))
-                    pygame.draw.circle(*my_player.draw_info(screen))
-                    pygame.draw.circle(*opponent_player.draw_info(screen))
-                else:
-                    pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen))
-                    pygame.draw.circle(*my_player.change_coords().draw_info(screen))
-                    pygame.draw.circle(*opponent_player.change_coords().draw_info(screen))
+
+            '''
+                rewriting objects
+            '''
+            if is_animated:
+                pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen, pygame.Color(*animation_color), animation_radius))
+                pygame.draw.circle(*my_player.draw_info(screen))
+                pygame.draw.circle(*opponent_player.draw_info(screen))
+            else:
+                pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen))
+                pygame.draw.circle(*my_player.change_coords().draw_info(screen))
+                pygame.draw.circle(*opponent_player.change_coords().draw_info(screen))
         else:
 
             my_player.coords = data['your_coords']
@@ -443,14 +423,24 @@ def online(pygame):
                 pygame.draw.circle(*opponent_player.draw_info(screen))
             
         if max(my_score, opponent_score) >= 11:
+            if make_rules:
+                while 100000:
+                    connected.send_json({
+                        'pid': my_pid,
+                        'to': opponent_pid,
+                        'your_coords': opponent_player.get_coords(),
+                        'my_coords': my_player.get_coords(),
+                        'puck_coords': puck.coords,
+                        "score": (my_score, opponent_score),
+                    }, opponent_ip)
             del connected
             if my_score > opponent_score:
-                return result(pygame, "You're won")
+                return result_screen(pygame, "You're won")
             else:
-                return result(pygame, "You're lose")
+                return result_screen(pygame, "You're lose")
 
-        first_score_object = main_font.render(str(first_score), True, WHITE)
-        second_score_object = main_font.render(str(second_score), True, WHITE)
+        first_score_object = main_font.render(str(my_score), True, WHITE)
+        second_score_object = main_font.render(str(opponent_score), True, WHITE)
         screen.blit(first_score_object, (width / 2 - 40, 10))
         screen.blit(second_score_object, (width / 2 + 30, 10))
         return_to_menu.draw("Menu", 20, pygame=pygame, screen=screen)
@@ -461,6 +451,35 @@ def online(pygame):
     ######################################################################################
     ######################################################################################
     ######################################################################################
+
+
+def result_screen(pygame, rez):
+
+    pygame.display.set_caption('Hockey')
+    size = 1000, 600
+    screen = pygame.display.set_mode(size)
+    running = True
+    fps = 120
+    clock = pygame.time.Clock()
+    return_to_menu = Button(465, 540, 65, 50)
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                return 1000
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos 
+                if return_to_menu.is_clicked(mouse_pos):
+                    return 0
+
+        screen.fill((0, 0, 0))
+        write_text(rez, (355, 250), 30, pygame, screen, color=WHITE)
+        return_to_menu.draw("Menu", 20, pygame, screen)
+        pygame.display.update()
+        clock.tick(fps)
+
+
 
 
 def ai(pygame):
