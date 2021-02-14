@@ -184,6 +184,10 @@ def game_intro(pygame):
                     return 3
 
         screen.fill((0, 0, 0))
+        font = pygame.font.Font('fonts/static/RobotoMono-MediumItalic.ttf', 30)
+        text = font.render("Сhoose a game", True, WHITE)
+        text_rect = text.get_rect(center=(width / 2, height / 2 - 200))
+        screen.blit(text, text_rect)
         two_players_button.draw("Two players", 20, pygame=pygame, screen=screen)
         online_players_button.draw('Online', 20, pygame=pygame, screen = screen)
         ai_plaing.draw("Play with ai", 20, pygame=pygame, screen=screen)
@@ -268,11 +272,25 @@ def online(pygame):
             return False
         return data['pid'] == opponent_pid and data['to'] == my_pid
     past_score = [-1, -1]
-    data = 'hello'
+    data = {
+        'error': '',
+        'your_coords': opponent_player.get_coords(),
+        'my_coords': my_player.get_coords(),
+        'puck_coords': puck.coords,
+        "score": (my_score, opponent_score),
+        'my_vector': (0, 0)
+    }
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                for i in range(10000):
+                        connected.send_json({
+                            'pid': my_pid,
+                            'to': opponent_pid,
+                            'error': "Your opponent has left the game",
+                        }, opponent_ip)
+
                 return 1000
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
@@ -312,12 +330,12 @@ def online(pygame):
                 mouse_pos = event.pos
 
                 if return_to_menu.is_clicked(mouse_pos):
-                    counter = 100000
-                    while counter:
-                        counter -= 1
+                    for i in range(10000):
                         connected.send_json({
-                        'error': "Your opponent has left the game",
-                    }, opponent_ip)
+                            'pid': my_pid,
+                            'to': opponent_pid,
+                            'error': "Your opponent has left the game",
+                        }, opponent_ip)
 
                     return 0
 
@@ -346,21 +364,21 @@ def online(pygame):
                 'my_coords': my_player.get_coords(),
                 'puck_coords': puck.coords,
                 "score": (my_score, opponent_score),
-                'error': -1,
+                'error': '',
             }, opponent_ip)
         else:
             connected.send_json({
                 'pid': my_pid,
                 'to': opponent_pid,
                 'my_vector': my_player.movement.get(),
-                'error': -1,
+                'error': '',
             }, opponent_ip)
         last_data = data
-        data = connected.recv_json_until(predicate=predicate, timeout=0.02)[0]
+        data = connected.recv_json_until(predicate=predicate, timeout=0.002)[0]
         
         if not data:
             data = last_data
-        if data['error'] != -1:
+        if data['error'] != '':
             return result_screen(pygame, data['error'])
         # print(data)
         # data = json.loads(data)
@@ -397,7 +415,6 @@ def online(pygame):
                 animation_radius = 50
                 my_player.coords = [width / 4, height / 2]
                 opponent_player.coords = [3 * width / 4, height / 2]
-                continue
 
             '''
                 rewriting objects
@@ -436,15 +453,15 @@ def online(pygame):
             
         if max(my_score, opponent_score) >= 11:
             if make_rules:
-                counter = 100000
-                while counter:
-                    counter -= 1
+                for i in range(1000):
+                    
                     connected.send_json({
                         'pid': my_pid,
                         'to': opponent_pid,
                         'your_coords': opponent_player.get_coords(),
                         'my_coords': my_player.get_coords(),
                         'puck_coords': puck.coords,
+                        'error': '',
                         "score": (my_score, opponent_score),
                     }, opponent_ip)
             del connected
@@ -477,7 +494,7 @@ def online(pygame):
 def result_screen(pygame, rez):
 
     pygame.display.set_caption('Hockey')
-    size = 1000, 600
+    size = width, height = 1000, 600
     screen = pygame.display.set_mode(size)
     running = True
     fps = 120
@@ -495,8 +512,12 @@ def result_screen(pygame, rez):
                     return 0
 
         screen.fill((0, 0, 0))
-        write_text(rez, (355, 250), 30, pygame, screen, color=WHITE)
-        return_to_menu.draw("Menu", 20, pygame, screen)
+
+        font = pygame.font.Font('fonts/static/RobotoMono-MediumItalic.ttf', 25)
+        text = font.render(rez, True, WHITE)
+        text_rect = text.get_rect(center=(width / 2, height / 2))
+        screen.blit(text, text_rect)
+        return_to_menu.draw('Menu', 20, pygame, screen)
         pygame.display.update()
         clock.tick(fps)
 
