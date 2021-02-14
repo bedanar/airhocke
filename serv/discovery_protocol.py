@@ -1,18 +1,19 @@
 import random
-import network
+# import network
+from .network import Networking
 import logging
-import concurrent.futures as fut
 import threading
 
 
 class DiscoveryProtocol:
     A_DISCOVERY = 'discovery'
     A_STOP_SCAN = 'stop_scan'
+    # import network
 
     def __init__(self, pid, port_no):
         assert pid
         self._my_pid = pid
-        self._network = network.Networking(port_no, broadcast=True)
+        self._network = Networking(port_no, broadcast=True)
         self._network.bind()
 
     def _send_action(self, action, data=None):
@@ -77,3 +78,9 @@ if __name__ == '__main__':
     print('pid =', pid)
     info = DiscoveryProtocol(pid, 37020).run()
     print("success: ", info)
+    print(info[0][0])
+    
+    connected = Networking(37020)
+    connected.bind(info[0][0])  
+    connected.send_json({"error": pid}, info[0][0])
+    print(connected.recv_json())

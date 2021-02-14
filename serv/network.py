@@ -17,7 +17,7 @@ class Networking:
     def get_socket(cls, broadcast=False, timeout=TIME_OUT):
         """
         Создает UDP сокет
-        :param broadcast: широковещателньый или нет
+        :param broadcast: широковещательный или нет
         :param timeout: тайм аут
         :return: сокет
         """
