@@ -357,10 +357,11 @@ def online(pygame):
             }, opponent_ip)
         last_data = data
         data = connected.recv_json_until(predicate=predicate, timeout=0.02)[0]
-        if data['error'] != -1:
-            return result_screen(pygame, data['error'])
+        
         if not data:
             data = last_data
+        if data['error'] != -1:
+            return result_screen(pygame, data['error'])
         # print(data)
         # data = json.loads(data)
 
@@ -451,11 +452,18 @@ def online(pygame):
                 return result_screen(pygame, "You're won")
             else:
                 return result_screen(pygame, "You're lose")
+        if make_rules:
 
-        first_score_object = main_font.render(str(my_score), True, WHITE)
-        second_score_object = main_font.render(str(opponent_score), True, WHITE)
+            first_score_object = main_font.render(str(my_score), True, WHITE)
+            second_score_object = main_font.render(str(opponent_score), True, WHITE)
+        else:
+            first_score_object = main_font.render(str(opponent_score), True, WHITE)
+            second_score_object = main_font.render(str(my_score), True, WHITE)
+
         screen.blit(first_score_object, (width / 2 - 40, 10))
         screen.blit(second_score_object, (width / 2 + 30, 10))
+    
+
         return_to_menu.draw("Menu", 20, pygame=pygame, screen=screen)
         clock.tick(fps)
         pygame.display.flip()
