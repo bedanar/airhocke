@@ -10,10 +10,9 @@ if __name__ == '__main__':
     running = True
     pygame.init()
     while running:
-        # try:
-        game_condition = values[game_condition](pygame)
-        # except Exception as e:
-        #     print(e)
-        #     print("Game had already ended")
-        #     running = False
+        try:
+            game_condition = values[game_condition](pygame)
+        except Exception as e:
+            print(e)
+            running = False
     pygame.quit()

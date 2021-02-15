@@ -31,3 +31,7 @@ def connect(result, index):
     if result[index] == 'stoped':
         return {"error": "hello"}
     result[index] = {"my" : pid, "enemy": info}
+
+
+def check_in_the_first_part(coords, width):
+    return coords[0] < width / 2

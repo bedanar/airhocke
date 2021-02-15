@@ -9,6 +9,7 @@ import concurrent.futures
 from multiprocessing.pool import ThreadPool
 from serv.network import Networking
 import json
+import math
 
 def two_in_one(pygame):
     pygame.display.set_caption('Hockey')
@@ -198,7 +199,7 @@ def game_intro(pygame):
 
 
 def online(pygame):
-    result = [None]
+    result = [{}]
     thread = threading.Thread(target=connect, args=(result, 0))
     thread.start()
     pygame.display.set_caption('Hockey')
@@ -207,7 +208,7 @@ def online(pygame):
     screen = pygame.display.set_mode(size)
     running = True
     fps = 120
-    opponent = None
+    opponent = result[0]
     clock = pygame.time.Clock()
     return_to_menu = Button(465, 540, 65, 50)
     while running:
@@ -220,7 +221,7 @@ def online(pygame):
                 mouse_pos = event.pos 
                 if return_to_menu.is_clicked(mouse_pos):
                     return 0
-        if result[0]:
+        if len(result[0].items()):
             opponent = result[0]
             break
         screen.fill((0, 0, 0))
@@ -231,7 +232,7 @@ def online(pygame):
         pygame.display.update()
         clock.tick(fps)
     
-    print(opponent)
+    print(opponent) 
     make_rules = (opponent['my'] > opponent['enemy'][1])
     opponent_ip = opponent['enemy'][0][0]
     opponent_pid = opponent['enemy'][1]
@@ -380,9 +381,6 @@ def online(pygame):
             data = last_data
         if data['error'] != '':
             return result_screen(pygame, data['error'])
-        # print(data)
-        # data = json.loads(data)
-
 
         if animation_color != [255, 255, 255, 255]:
             for i in range(3):
@@ -394,7 +392,6 @@ def online(pygame):
 
 
         if make_rules:
-            # print('I"m a big boss')
             opponent_player.movement = Movement(*data['my_vector'])
             rezult = puck.check_goal()
             if rezult:
@@ -525,4 +522,174 @@ def result_screen(pygame, rez):
 
 
 def ai(pygame):
-    pass
+    pygame.display.set_caption('Hockey')
+    size = width, height = 1000, 600
+    screen = pygame.display.set_mode(size)
+    running = True
+    fps = 120
+    clock = pygame.time.Clock()
+    first_coef = 1
+    first = Player([width / 4, height / 2], 50, 1, height, width)
+    second = Player([3 * width / 4, height / 2], 50, 0, height, width)
+    puck = Puck([width / 2 + 95, height / 2] if randint(0, 1) else [width / 2 - 95, height / 2], [first, second], 25, height, width)
+    first_score, second_score = 0, 0
+    main_font = pygame.font.Font(None, 36)
+    is_animated = 1
+    animation_color = [55, 55, 55, 255]
+    puck_radius = 50
+    animation_radius = 50
+
+
+    return_to_menu = Button(465, 540, 65, 50)
+    wrong_counter = 0
+    last_coords = (0, 0)
+    good_counter = 0
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                return 1000
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    first.change_movement().change_y(-NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_a:
+                    first.change_movement().change_x(-NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_s:
+                    first.change_movement().change_y(NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_d:
+                    first.change_movement().change_x(NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_UP:
+                    first.change_movement().change_y(-NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_LEFT:
+                    first.change_movement().change_x(-NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_DOWN:
+                    first.change_movement().change_y(NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_RIGHT:
+                    first.change_movement().change_x(NORMAL_MOVEMENT * first_coef)
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_w:
+                    first.change_movement().change_y(NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_a:
+                    first.change_movement().change_x(NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_s:
+                    first.change_movement().change_y(-NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_d:
+                    first.change_movement().change_x(-NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_UP:
+                    first.change_movement().change_y(NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_LEFT:
+                    first.change_movement().change_x(NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_DOWN:
+                    first.change_movement().change_y(-NORMAL_MOVEMENT * first_coef)
+                if event.key == pygame.K_RIGHT:
+                    first.change_movement().change_x(-NORMAL_MOVEMENT * first_coef)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+
+                if return_to_menu.is_clicked(mouse_pos):
+                    return 0
+
+        screen.fill((0, 0, 0))
+
+        
+        '''
+            draw field
+        '''
+        pygame.draw.line(screen, WHITE, [0, 0], [width, 0], BORDERS)
+        pygame.draw.line(screen, WHITE, [0, height - 1], [width , height - 1], BORDERS)
+        pygame.draw.line(screen, WHITE, [0, 0], [0, height / 2 - GATES_SIZE / 2], BORDERS)
+        pygame.draw.line(screen, WHITE, [0, height/ 2 + GATES_SIZE / 2], [0, height], BORDERS)
+        pygame.draw.line(screen, WHITE, [width - 1, 0], [width - 1, height / 2 - GATES_SIZE / 2], BORDERS)
+        pygame.draw.line(screen, WHITE, [width - 1, height/ 2 + GATES_SIZE / 2], [width - 1, height], BORDERS)
+        pygame.draw.line(screen, WHITE, [width / 2, 0], [width / 2, height], BORDERS - 1)
+        pygame.draw.circle(screen, WHITE, [width / 2, height / 2], 95, 1)
+        '''
+            render goals
+        '''
+        rez = puck.check_goal()
+        if rez:
+            if rez == 1:
+                puck.coords = width / 2, height / 2
+                puck.movement.set(0, 0)
+                first_score += 1
+                puck.coords = [width / 2 + 95, height / 2]
+
+            if rez == 2:
+                puck.coords = width / 2, height / 2
+                puck.movement.set(0, 0)
+                second_score += 1
+
+                puck.coords = [width / 2 - 95, height / 2]
+
+            is_animated = 1
+            animation_color = [55, 55, 55, 255]
+            animation_radius = 50
+            first.coords = [width / 4, height / 2]
+            second.coords = [3 * width / 4, height / 2]
+        if max(first_score, second_score) >= 11:
+            if first_score > second_score:
+                return result_screen(pygame, "You won")
+            else:
+                return result_screen(pygame, "You lose")
+
+        if animation_color != [255, 255, 255, 255]:
+            for i in range(3):
+                animation_color[i] += 5
+            animation_radius += (25 - puck_radius) / (200 / 5)
+            clock.tick(100)
+        else:
+            is_animated = 0
+
+        '''
+            rewriting objects
+        '''
+
+        # make movement for our AI player
+
+        x_diff = second.coords[0] - puck.coords[0]
+        y_diff = second.coords[1] - puck.coords[1]
+
+        dist = (x_diff ** 2 + y_diff ** 2) ** 0.5
+
+        puck_coords = [3 * width / 4 + 150, height / 2]
+        if wrong_counter > 50:
+            good_counter = 60
+            wrong_counter = 0
+        if check_in_the_first_part(puck.coords, width) or good_counter > 0:
+            x_diff = second.coords[0] - puck_coords[0]
+            y_diff = second.coords[1] - puck_coords[1]
+            good_counter -= 1
+    
+            
+        
+
+        great_vector = (-x_diff, -y_diff)
+
+        if max(list(map(lambda x: math.fabs(x), great_vector)))  > NORMAL_MOVEMENT:
+            great_vector = tuple(map(lambda x: x * NORMAL_MOVEMENT / max(list(map(lambda x: math.fabs(x), great_vector))), great_vector))
+
+        second.movement = Movement(*great_vector)
+        if good_counter < 0:
+            if second.coords[0] - EPS <= last_coords[0] <= second.coords[0] + EPS and second.coords[1] - EPS <= last_coords[1] <= second.coords[1] + EPS:
+                wrong_counter += 1
+            else:
+                wrong_counter = 0
+        last_coords = second.coords 
+        # main loop here's all objects are rewriting
+        if is_animated:
+            pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen, pygame.Color(*animation_color), animation_radius))
+            pygame.draw.circle(*first.draw_info(screen))
+            pygame.draw.circle(*second.draw_info(screen))
+        else:
+            pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen))
+            pygame.draw.circle(*first.change_coords().draw_info(screen))
+            pygame.draw.circle(*second.change_coords().draw_info(screen))
+
+        first_score_object = main_font.render(str(first_score), True, BLUE)
+        second_score_object = main_font.render(str(second_score), True, RED)
+        screen.blit(first_score_object, (width / 2 - 40, 10))
+        screen.blit(second_score_object, (width / 2 + 30, 10))
+        return_to_menu.draw("Menu", 20, pygame=pygame, screen=screen)
+        clock.tick(fps)
+        pygame.display.flip()
+    return 0
