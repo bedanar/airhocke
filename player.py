@@ -22,19 +22,19 @@ class Player:
     def next_coords(self):
         if self.type:
             return (min(max(self.radius + BORDERS,
-                                   self.coords[0] + self.movement.x),
-                               self.window_length // 2 - self.radius - 50),
-                           min(max(self.radius + BORDERS,
-                                   self.coords[1] + self.movement.y),
-                               self.window_height - self.radius - BORDERS))
+                            self.coords[0] + self.movement.x),
+                        self.window_length // 2 - self.radius - 50),
+                    min(max(self.radius + BORDERS,
+                            self.coords[1] + self.movement.y),
+                        self.window_height - self.radius - BORDERS))
         else:
             return (min(max(self.radius +
-                                   self.window_length //
-                                   2 + 50, self.coords[0] +
-                                   self.movement.x), self.window_length - BORDERS -
-                               self.radius), min(max(self.radius + BORDERS, self.coords[1] +
-                                                     self.movement.y), self.window_height - BORDERS -
-                                                 self.radius))
+                            self.window_length //
+                            2 + 50, self.coords[0] +
+                            self.movement.x), self.window_length - BORDERS -
+                        self.radius), min(max(self.radius + BORDERS, self.coords[1] +
+                                              self.movement.y), self.window_height - BORDERS -
+                                          self.radius))
 
     def get_coords(self):
         return self.coords

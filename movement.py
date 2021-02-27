@@ -1,5 +1,6 @@
 from vector_math import *
 
+
 class Movement:
     def __init__(self, x=10 ** -9, y=10 ** -8):
         self.x, self.y = x, y
@@ -27,7 +28,14 @@ class Movement:
 
     def connect(self, over, first_center, second_center):
         before = self
-        self.set(*calculate_rez_vector(normal_vector(first_center, second_center, Movement()), self).get_info())
+        self.set(
+            *
+            calculate_rez_vector(
+                normal_vector(
+                    first_center,
+                    second_center,
+                    Movement()),
+                self).get_info())
         if self == before:
             mult_vector(-1, self)
         self.set(*(self + over).get_info())
@@ -37,7 +45,6 @@ class Movement:
 
     def __str__(self):
         return str((self.x, self.y))
-
 
     def __add__(self, other):
         return Movement(self.x + other.x, self.y + other.y)

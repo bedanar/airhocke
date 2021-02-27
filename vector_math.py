@@ -23,6 +23,7 @@ def mult_vector(koef, vector):
 
 
 def calculate_rez_vector(normal_vector, begin_vector):
-    koef = scalar(normal_vector, begin_vector) / scalar(normal_vector, normal_vector)
+    koef = scalar(normal_vector, begin_vector) / \
+        scalar(normal_vector, normal_vector)
     mult_vector(-2 * koef, normal_vector)
     return mult_vector(-1, normal_vector + begin_vector)

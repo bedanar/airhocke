@@ -24,7 +24,8 @@ class DiscoveryProtocol:
         :return:
         """
         data = data or {}
-        self._network.send_json_broadcast({'action': action, 'sender': self._my_pid, **data})
+        self._network.send_json_broadcast(
+            {'action': action, 'sender': self._my_pid, **data})
 
     def _is_message_for_me(self, d):
         """
@@ -35,7 +36,8 @@ class DiscoveryProtocol:
         :param d: словарь данных
         :return:
         """
-        return d and d.get('action') in [self.A_DISCOVERY, self.A_STOP_SCAN] and d.get('sender') != self._my_pid
+        return d and d.get('action') in [self.A_DISCOVERY, self.A_STOP_SCAN] and d.get(
+            'sender') != self._my_pid
 
     def run(self):
         while True:
@@ -43,19 +45,24 @@ class DiscoveryProtocol:
             # рассылаем всем сообщение A_DISCOVERY
             self._send_action(self.A_DISCOVERY)
 
-            # ждем приемлемого ответа не более 5 секунд, игнорируя таймауты и неревалентные пакеты
-            data, addr = self._network.recv_json_until(self._is_message_for_me, timeout=5.0)
+            # ждем приемлемого ответа не более 5 секунд, игнорируя таймауты и
+            # неревалентные пакеты
+            data, addr = self._network.recv_json_until(
+                self._is_message_for_me, timeout=5.0)
 
             # если пришло что-то наше
             if data:
                 action, sender = data['action'], data['sender']
                 # кто-то нам отправил A_DISCOVERY
                 if action == self.A_DISCOVERY:
-                    # отсылаем ему сообщение остановить сканирование A_STOP_SCAN, указав его PID
+                    # отсылаем ему сообщение остановить сканирование
+                    # A_STOP_SCAN, указав его PID
                     self._send_action(self.A_STOP_SCAN, {'to_pid': sender})
-                    # todo: что делать, если оно не дошло? тот пир продолжит сканировать дальше...
+                    # todo: что делать, если оно не дошло? тот пир продолжит
+                    # сканировать дальше...
                 elif action == self.A_STOP_SCAN:
-                    # если получили сообщение остановить сканирование, нужно выяснить нам ли оно предназначено
+                    # если получили сообщение остановить сканирование, нужно
+                    # выяснить нам ли оно предназначено
                     if data['to_pid'] != self._my_pid:
                         continue  # это не нам; игнорировать!
                 return addr, sender
@@ -79,8 +86,8 @@ if __name__ == '__main__':
     info = DiscoveryProtocol(pid, 37020).run()
     print("success: ", info)
     print(info[0][0])
-    
+
     connected = Networking(37020)
-    connected.bind(info[0][0])  
+    connected.bind(info[0][0])
     connected.send_json({"error": pid}, info[0][0])
     print(connected.recv_json())

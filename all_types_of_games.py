@@ -11,6 +11,7 @@ from serv.network import Networking
 import json
 import math
 
+
 def two_in_one(pygame):
     pygame.display.set_caption('Hockey')
     size = width, height = 1000, 600
@@ -23,14 +24,19 @@ def two_in_one(pygame):
     first_coef, second_coef = 1, 1
     first = Player([width / 4, height / 2], 50, 1, height, width)
     second = Player([3 * width / 4, height / 2], 50, 0, height, width)
-    puck = Puck([width / 2 + 95, height / 2] if randint(0, 1) else [width / 2 - 95, height / 2], [first, second], 25, height, width)
+    puck = Puck([width /
+                 2 +
+                 95, height /
+                 2] if randint(0, 1) else [width /
+                                           2 -
+                                           95, height /
+                                           2], [first, second], 25, height, width)
     first_score, second_score = 0, 0
     main_font = pygame.font.Font(None, 36)
     is_animated = 1
     animation_color = [55, 55, 55, 255]
     puck_radius = 50
     animation_radius = 50
-
 
     return_to_menu = Button(465, 540, 65, 50)
 
@@ -81,17 +87,24 @@ def two_in_one(pygame):
 
         screen.fill((0, 0, 0))
 
-        
         '''
             draw field
         '''
         pygame.draw.line(screen, WHITE, [0, 0], [width, 0], BORDERS)
-        pygame.draw.line(screen, WHITE, [0, height - 1], [width , height - 1], BORDERS)
-        pygame.draw.line(screen, WHITE, [0, 0], [0, height / 2 - GATES_SIZE / 2], BORDERS)
-        pygame.draw.line(screen, WHITE, [0, height/ 2 + GATES_SIZE / 2], [0, height], BORDERS)
-        pygame.draw.line(screen, WHITE, [width - 1, 0], [width - 1, height / 2 - GATES_SIZE / 2], BORDERS)
-        pygame.draw.line(screen, WHITE, [width - 1, height/ 2 + GATES_SIZE / 2], [width - 1, height], BORDERS)
-        pygame.draw.line(screen, WHITE, [width / 2, 0], [width / 2, height], BORDERS - 1)
+        pygame.draw.line(
+            screen, WHITE, [0, height - 1], [width, height - 1], BORDERS)
+        pygame.draw.line(
+            screen, WHITE, [
+                0, 0], [
+                0, height / 2 - GATES_SIZE / 2], BORDERS)
+        pygame.draw.line(
+            screen, WHITE, [0, height / 2 + GATES_SIZE / 2], [0, height], BORDERS)
+        pygame.draw.line(screen, WHITE, [
+                         width - 1, 0], [width - 1, height / 2 - GATES_SIZE / 2], BORDERS)
+        pygame.draw.line(screen, WHITE, [
+                         width - 1, height / 2 + GATES_SIZE / 2], [width - 1, height], BORDERS)
+        pygame.draw.line(
+            screen, WHITE, [width / 2, 0], [width / 2, height], BORDERS - 1)
         pygame.draw.circle(screen, WHITE, [width / 2, height / 2], 95, 1)
         '''
             render goals
@@ -134,11 +147,19 @@ def two_in_one(pygame):
             rewriting objects
         '''
         if is_animated:
-            pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen, pygame.Color(*animation_color), animation_radius))
+            pygame.draw.circle(
+                *
+                puck.remove_collision().change_coords().draw_info(
+                    screen,
+                    pygame.Color(
+                        *
+                        animation_color),
+                    animation_radius))
             pygame.draw.circle(*first.draw_info(screen))
             pygame.draw.circle(*second.draw_info(screen))
         else:
-            pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen))
+            pygame.draw.circle(
+                *puck.remove_collision().change_coords().draw_info(screen))
             pygame.draw.circle(*first.change_coords().draw_info(screen))
             pygame.draw.circle(*second.change_coords().draw_info(screen))
 
@@ -173,7 +194,7 @@ def game_intro(pygame):
                 return 1000
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = event.pos 
+                mouse_pos = event.pos
 
                 if two_players_button.is_clicked(mouse_pos):
                     return 1
@@ -189,13 +210,16 @@ def game_intro(pygame):
         text = font.render("Сhoose a game", True, WHITE)
         text_rect = text.get_rect(center=(width / 2, height / 2 - 200))
         screen.blit(text, text_rect)
-        two_players_button.draw("Two players", 20, pygame=pygame, screen=screen)
-        online_players_button.draw('Online', 20, pygame=pygame, screen = screen)
+        two_players_button.draw(
+            "Two players",
+            20,
+            pygame=pygame,
+            screen=screen)
+        online_players_button.draw('Online', 20, pygame=pygame, screen=screen)
         ai_plaing.draw("Play with ai", 20, pygame=pygame, screen=screen)
 
         pygame.display.update()
         clock.tick(fps)
-
 
 
 def online(pygame):
@@ -218,31 +242,31 @@ def online(pygame):
                 return 1000
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = event.pos 
+                mouse_pos = event.pos
                 if return_to_menu.is_clicked(mouse_pos):
                     return 0
         if len(result[0].items()):
             opponent = result[0]
             break
         screen.fill((0, 0, 0))
-        
+
         write_text(text, (330, 250), 30, pygame, screen, color=WHITE)
         return_to_menu.draw("Menu", 20, pygame, screen)
-        
+
         pygame.display.update()
         clock.tick(fps)
-    
-    print(opponent) 
+
+    print(opponent)
     make_rules = (opponent['my'] > opponent['enemy'][1])
     opponent_ip = opponent['enemy'][0][0]
     opponent_pid = opponent['enemy'][1]
     my_pid = opponent['my']
     print(opponent_ip, opponent_pid)
-    ######################################################################################
-    ######################################################################################
-    ######################################################################################
-    ######################################################################################
-    ######################################################################################
+    ##########################################################################
+    ##########################################################################
+    ##########################################################################
+    ##########################################################################
+    ##########################################################################
 
     running = True
     fps = 120
@@ -250,11 +274,18 @@ def online(pygame):
     first_coef, second_coef = 1, 1
     if make_rules:
         my_player = Player([width / 4, height / 2], 50, 1, height, width)
-        opponent_player = Player([3 * width / 4, height / 2], 50, 0, height, width)
+        opponent_player = Player(
+            [3 * width / 4, height / 2], 50, 0, height, width)
     else:
         opponent_player = Player([width / 4, height / 2], 50, 1, height, width)
         my_player = Player([3 * width / 4, height / 2], 50, 0, height, width)
-    puck = Puck([width / 2 + 95, height / 2] if randint(0, 1) else [width / 2 - 95, height / 2], [my_player, opponent_player], 25, height, width)
+    puck = Puck([width /
+                 2 +
+                 95, height /
+                 2] if randint(0, 1) else [width /
+                                           2 -
+                                           95, height /
+                                           2], [my_player, opponent_player], 25, height, width)
     my_score, opponent_score = 0, 0
     main_font = pygame.font.Font(None, 36)
     is_animated = 1
@@ -262,12 +293,11 @@ def online(pygame):
     puck_radius = 50
     animation_radius = 50
 
-
     return_to_menu = Button(465, 540, 65, 50)
 
-
     connected = Networking(37020)
-    connected.bind()    
+    connected.bind()
+
     def predicate(data):
         if not data:
             return False
@@ -286,11 +316,11 @@ def online(pygame):
             if event.type == pygame.QUIT:
                 running = False
                 for i in range(10000):
-                        connected.send_json({
-                            'pid': my_pid,
-                            'to': opponent_pid,
-                            'error': "Your opponent has left the game",
-                        }, opponent_ip)
+                    connected.send_json({
+                        'pid': my_pid,
+                        'to': opponent_pid,
+                        'error': "Your opponent has left the game",
+                    }, opponent_ip)
 
                 return 1000
             if event.type == pygame.KEYDOWN:
@@ -342,17 +372,24 @@ def online(pygame):
 
         screen.fill((0, 0, 0))
 
-        
         '''
             draw field
         '''
         pygame.draw.line(screen, WHITE, [0, 0], [width, 0], BORDERS)
-        pygame.draw.line(screen, WHITE, [0, height - 1], [width , height - 1], BORDERS)
-        pygame.draw.line(screen, WHITE, [0, 0], [0, height / 2 - GATES_SIZE / 2], BORDERS)
-        pygame.draw.line(screen, WHITE, [0, height/ 2 + GATES_SIZE / 2], [0, height], BORDERS)
-        pygame.draw.line(screen, WHITE, [width - 1, 0], [width - 1, height / 2 - GATES_SIZE / 2], BORDERS)
-        pygame.draw.line(screen, WHITE, [width - 1, height/ 2 + GATES_SIZE / 2], [width - 1, height], BORDERS)
-        pygame.draw.line(screen, WHITE, [width / 2, 0], [width / 2, height], BORDERS - 1)
+        pygame.draw.line(
+            screen, WHITE, [0, height - 1], [width, height - 1], BORDERS)
+        pygame.draw.line(
+            screen, WHITE, [
+                0, 0], [
+                0, height / 2 - GATES_SIZE / 2], BORDERS)
+        pygame.draw.line(
+            screen, WHITE, [0, height / 2 + GATES_SIZE / 2], [0, height], BORDERS)
+        pygame.draw.line(screen, WHITE, [
+                         width - 1, 0], [width - 1, height / 2 - GATES_SIZE / 2], BORDERS)
+        pygame.draw.line(screen, WHITE, [
+                         width - 1, height / 2 + GATES_SIZE / 2], [width - 1, height], BORDERS)
+        pygame.draw.line(
+            screen, WHITE, [width / 2, 0], [width / 2, height], BORDERS - 1)
         pygame.draw.circle(screen, WHITE, [width / 2, height / 2], 95, 1)
         '''
             render goals
@@ -375,11 +412,11 @@ def online(pygame):
                 'error': '',
             }, opponent_ip)
         last_data = data
-        data = connected.recv_json_until(predicate=predicate, timeout=0.002)[0]
-        
+        data = connected.recv_json_until(predicate=predicate, timeout=0.00002)[0]
+
         if not data:
             data = last_data
-        if data['error'] != '':
+        elif data['error'] != '':
             return result_screen(pygame, data['error'])
 
         if animation_color != [255, 255, 255, 255]:
@@ -389,7 +426,6 @@ def online(pygame):
             clock.tick(100)
         else:
             is_animated = 0
-
 
         if make_rules:
             opponent_player.movement = Movement(*data['my_vector'])
@@ -417,17 +453,26 @@ def online(pygame):
                 rewriting objects
             '''
             if is_animated:
-                pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen, pygame.Color(*animation_color), animation_radius))
+                pygame.draw.circle(
+                    *
+                    puck.remove_collision().change_coords().draw_info(
+                        screen,
+                        pygame.Color(
+                            *
+                            animation_color),
+                        animation_radius))
                 pygame.draw.circle(*my_player.draw_info(screen))
                 pygame.draw.circle(*opponent_player.draw_info(screen))
             else:
-                pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen))
-                pygame.draw.circle(*my_player.change_coords().draw_info(screen))
-                pygame.draw.circle(*opponent_player.change_coords().draw_info(screen))
+                pygame.draw.circle(
+                    *puck.remove_collision().change_coords().draw_info(screen))
+                pygame.draw.circle(
+                    *my_player.change_coords().draw_info(screen))
+                pygame.draw.circle(
+                    *opponent_player.change_coords().draw_info(screen))
         else:
 
             my_player.coords = data['your_coords']
-            
 
             opponent_player.coords = data['my_coords']
             puck.coords = data['puck_coords']
@@ -440,18 +485,25 @@ def online(pygame):
                 my_player.coords = [width / 4, height / 2]
                 opponent_player.coords = [3 * width / 4, height / 2]
             if is_animated:
-                pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen, pygame.Color(*animation_color), animation_radius))
+                pygame.draw.circle(
+                    *
+                    puck.remove_collision().change_coords().draw_info(
+                        screen,
+                        pygame.Color(
+                            *
+                            animation_color),
+                        animation_radius))
                 pygame.draw.circle(*my_player.draw_info(screen))
                 pygame.draw.circle(*opponent_player.draw_info(screen))
             else:
                 pygame.draw.circle(*puck.draw_info(screen))
                 pygame.draw.circle(*my_player.draw_info(screen))
                 pygame.draw.circle(*opponent_player.draw_info(screen))
-            
+
         if max(my_score, opponent_score) >= 11:
             if make_rules:
                 for i in range(1000):
-                    
+
                     connected.send_json({
                         'pid': my_pid,
                         'to': opponent_pid,
@@ -469,23 +521,24 @@ def online(pygame):
         if make_rules:
 
             first_score_object = main_font.render(str(my_score), True, WHITE)
-            second_score_object = main_font.render(str(opponent_score), True, WHITE)
+            second_score_object = main_font.render(
+                str(opponent_score), True, WHITE)
         else:
-            first_score_object = main_font.render(str(opponent_score), True, WHITE)
+            first_score_object = main_font.render(
+                str(opponent_score), True, WHITE)
             second_score_object = main_font.render(str(my_score), True, WHITE)
 
         screen.blit(first_score_object, (width / 2 - 40, 10))
         screen.blit(second_score_object, (width / 2 + 30, 10))
-    
 
         return_to_menu.draw("Menu", 20, pygame=pygame, screen=screen)
         clock.tick(fps)
         pygame.display.flip()
     return 0
-    ######################################################################################
-    ######################################################################################
-    ######################################################################################
-    ######################################################################################
+    ##########################################################################
+    ##########################################################################
+    ##########################################################################
+    ##########################################################################
 
 
 def result_screen(pygame, rez):
@@ -504,7 +557,7 @@ def result_screen(pygame, rez):
                 return 1000
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = event.pos 
+                mouse_pos = event.pos
                 if return_to_menu.is_clicked(mouse_pos):
                     return 0
 
@@ -519,8 +572,6 @@ def result_screen(pygame, rez):
         clock.tick(fps)
 
 
-
-
 def ai(pygame):
     pygame.display.set_caption('Hockey')
     size = width, height = 1000, 600
@@ -531,14 +582,19 @@ def ai(pygame):
     first_coef = 1
     first = Player([width / 4, height / 2], 50, 1, height, width)
     second = Player([3 * width / 4, height / 2], 50, 0, height, width)
-    puck = Puck([width / 2 + 95, height / 2] if randint(0, 1) else [width / 2 - 95, height / 2], [first, second], 25, height, width)
+    puck = Puck([width /
+                 2 +
+                 95, height /
+                 2] if randint(0, 1) else [width /
+                                           2 -
+                                           95, height /
+                                           2], [first, second], 25, height, width)
     first_score, second_score = 0, 0
     main_font = pygame.font.Font(None, 36)
     is_animated = 1
     animation_color = [55, 55, 55, 255]
     puck_radius = 50
     animation_radius = 50
-
 
     return_to_menu = Button(465, 540, 65, 50)
     wrong_counter = 0
@@ -591,17 +647,24 @@ def ai(pygame):
 
         screen.fill((0, 0, 0))
 
-        
         '''
             draw field
         '''
         pygame.draw.line(screen, WHITE, [0, 0], [width, 0], BORDERS)
-        pygame.draw.line(screen, WHITE, [0, height - 1], [width , height - 1], BORDERS)
-        pygame.draw.line(screen, WHITE, [0, 0], [0, height / 2 - GATES_SIZE / 2], BORDERS)
-        pygame.draw.line(screen, WHITE, [0, height/ 2 + GATES_SIZE / 2], [0, height], BORDERS)
-        pygame.draw.line(screen, WHITE, [width - 1, 0], [width - 1, height / 2 - GATES_SIZE / 2], BORDERS)
-        pygame.draw.line(screen, WHITE, [width - 1, height/ 2 + GATES_SIZE / 2], [width - 1, height], BORDERS)
-        pygame.draw.line(screen, WHITE, [width / 2, 0], [width / 2, height], BORDERS - 1)
+        pygame.draw.line(
+            screen, WHITE, [0, height - 1], [width, height - 1], BORDERS)
+        pygame.draw.line(
+            screen, WHITE, [
+                0, 0], [
+                0, height / 2 - GATES_SIZE / 2], BORDERS)
+        pygame.draw.line(
+            screen, WHITE, [0, height / 2 + GATES_SIZE / 2], [0, height], BORDERS)
+        pygame.draw.line(screen, WHITE, [
+                         width - 1, 0], [width - 1, height / 2 - GATES_SIZE / 2], BORDERS)
+        pygame.draw.line(screen, WHITE, [
+                         width - 1, height / 2 + GATES_SIZE / 2], [width - 1, height], BORDERS)
+        pygame.draw.line(
+            screen, WHITE, [width / 2, 0], [width / 2, height], BORDERS - 1)
         pygame.draw.circle(screen, WHITE, [width / 2, height / 2], 95, 1)
         '''
             render goals
@@ -655,33 +718,43 @@ def ai(pygame):
         if wrong_counter > 50:
             good_counter = 60
             wrong_counter = 0
+        flag = 1
         if check_in_the_first_part(puck.coords, width) or good_counter > 0:
             x_diff = second.coords[0] - puck_coords[0]
             y_diff = second.coords[1] - puck_coords[1]
-            good_counter -= 1
-    
-            
-        
+            flag = 0
+        good_counter -= 1
 
         great_vector = (-x_diff, -y_diff)
 
-        if max(list(map(lambda x: math.fabs(x), great_vector)))  > NORMAL_MOVEMENT:
-            great_vector = tuple(map(lambda x: x * NORMAL_MOVEMENT / max(list(map(lambda x: math.fabs(x), great_vector))), great_vector))
+        if max(list(map(lambda x: math.fabs(x), great_vector))
+               ) > NORMAL_MOVEMENT:
+            great_vector = tuple(map(lambda x: x * NORMAL_MOVEMENT / max(
+                list(map(lambda x: math.fabs(x), great_vector))), great_vector))
 
         second.movement = Movement(*great_vector)
-        if good_counter < 0:
-            if second.coords[0] - EPS <= last_coords[0] <= second.coords[0] + EPS and second.coords[1] - EPS <= last_coords[1] <= second.coords[1] + EPS:
+        if good_counter <= 0 and flag:
+            if second.coords[0] - EPS <= last_coords[0] <= second.coords[0] + \
+                    EPS and second.coords[1] - EPS <= last_coords[1] <= second.coords[1] + EPS:
                 wrong_counter += 1
             else:
                 wrong_counter = 0
-        last_coords = second.coords 
+        last_coords = second.coords
         # main loop here's all objects are rewriting
         if is_animated:
-            pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen, pygame.Color(*animation_color), animation_radius))
+            pygame.draw.circle(
+                *
+                puck.remove_collision().change_coords().draw_info(
+                    screen,
+                    pygame.Color(
+                        *
+                        animation_color),
+                    animation_radius))
             pygame.draw.circle(*first.draw_info(screen))
             pygame.draw.circle(*second.draw_info(screen))
         else:
-            pygame.draw.circle(*puck.remove_collision().change_coords().draw_info(screen))
+            pygame.draw.circle(
+                *puck.remove_collision().change_coords().draw_info(screen))
             pygame.draw.circle(*first.change_coords().draw_info(screen))
             pygame.draw.circle(*second.change_coords().draw_info(screen))
 

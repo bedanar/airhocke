@@ -21,7 +21,10 @@ class Networking:
         :param timeout: тайм аут
         :return: сокет
         """
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+        sock = socket.socket(
+            socket.AF_INET,
+            socket.SOCK_DGRAM,
+            socket.IPPROTO_UDP)
 
         # чтобы на одной машине можно было слушать тотже порт
         try:
@@ -44,7 +47,8 @@ class Networking:
             # получить датаграмму и адрес из сокета
             data, addr = self._socket.recvfrom(self.BUFFER_SIZE)
             # декодируем в юникод и загружаем из JSON
-            return json.loads(data.decode('utf-8', errors='ignore'), encoding='utf-8'), addr
+            return json.loads(data.decode(
+                'utf-8', errors='ignore'), encoding='utf-8'), addr
         except json.JSONDecodeError:
             logging.error(f'JSONDecodeError!')
         except socket.timeout:
@@ -94,7 +98,6 @@ class Networking:
         :param to: интерфейс ("" - любой)
         """
         self._socket.bind((to, self.port_no))
-
 
     def send_json(self, j, to):
         """

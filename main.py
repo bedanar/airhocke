@@ -1,5 +1,5 @@
 from all_types_of_games import two_in_one, game_intro, online, ai
-import pygame 
+import pygame
 
 game_condition = 0
 

@@ -29,11 +29,15 @@ class Puck(pygame.sprite.Sprite):
             player_coords = player.get_coords()
             if ((player_coords[0] - self.coords[0]) ** 2 + (player_coords[1] -
                                                             self.coords[1]) ** 2) ** 0.5 - 1 <= player.radius + self.radius:
-                self.movement.connect(player.movement, Point(*player.coords), Point(*self.coords))
+                self.movement.connect(
+                    player.movement,
+                    Point(
+                        *player.coords),
+                    Point(
+                        *self.coords))
                 for item in range(4):
                     self.coords = self.next_coords()
         return self
-
 
     def next_coords(self):
         up_y = self.window_height / 2 - GATES_SIZE / 2
@@ -41,9 +45,10 @@ class Puck(pygame.sprite.Sprite):
         down_y = up_y + GATES_SIZE
         down_y -= self.radius + 5
         if up_y <= self.coords[1] <= down_y:
-            return self.coords[0] + self.movement.x, self.coords[1] + self.movement.y
+            return self.coords[0] + \
+                self.movement.x, self.coords[1] + self.movement.y
         return (min(max(self.radius, self.coords[0] + self.movement.x), self.window_length - self.radius),
-                       min(max(self.radius, self.coords[1] + self.movement.y), self.window_height - self.radius))
+                min(max(self.radius, self.coords[1] + self.movement.y), self.window_height - self.radius))
 
     def draw_info(self, sc, color=-1, radius=-1):
         # print(color)
@@ -67,7 +72,7 @@ class Puck(pygame.sprite.Sprite):
         down_y = up_y + GATES_SIZE
         down_y -= self.radius + 5
         if self.coords[0] + self.radius - 18 <= 0:
-            if  up_y <= self.coords[1] <= down_y:
+            if up_y <= self.coords[1] <= down_y:
                 return 2
 
         if self.coords[0] - self.radius + 18 >= self.window_length - 4:
