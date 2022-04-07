@@ -16,7 +16,7 @@ class MovableObject(metaclass=ABCMeta):
             color: pygame.color.Color,
             radius: int,
             field_borders: tuple[int],
-            friction: float = 0.02,
+            friction: float = 0.0001,
     ):
         """Init player values."""
         self.pos = pygame.math.Vector2(x, y)
@@ -27,7 +27,7 @@ class MovableObject(metaclass=ABCMeta):
         self.friction = friction
 
     def update(self):
-        """Update positioin."""
+        """Update position."""
         self.pos += self.movement
         self.movement *= (1 - self.friction)
         self.normalize()
@@ -48,6 +48,7 @@ class Player(MovableObject):
         """Increase movement by given arguments."""
         self.movement.x += mov_x
         self.movement.y += mov_y
+        print(self.movement)
 
     def normalize(self):
         """Normalize values with borders."""

@@ -30,6 +30,7 @@ class Game():
     """Main game class."""
 
     SIZE = (1400, 768)
+    BASE_SPEED = 0.0001
 
     def __init__(self):
         """Init game instance."""
@@ -63,34 +64,36 @@ class Game():
                     pygame.quit()
                     break
                 elif event.key == pygame.K_RIGHT:
-                    self.__player_speed_x_inc += 1
+                    self.__player_speed_x_inc += self.BASE_SPEED
                 elif event.key == pygame.K_LEFT:
-                    self.__player_speed_x_inc -= 1
+                    self.__player_speed_x_inc -= self.BASE_SPEED
                 elif event.key == pygame.K_DOWN:
-                    self.__player_y_speed_inc += 1
+                    self.__player_y_speed_inc += self.BASE_SPEED
                 elif event.key == pygame.K_UP:
-                    self.__player_y_speed_inc -= 1
+                    self.__player_y_speed_inc -= self.BASE_SPEED
                 elif event.key == pygame.K_LSHIFT:
                     self.__speed_booster = True
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_RIGHT:
-                    self.__player_speed_x_inc -= 1
+                    self.__player_speed_x_inc -= self.BASE_SPEED
                 elif event.key == pygame.K_LEFT:
-                    self.__player_speed_x_inc += 1
+                    self.__player_speed_x_inc += self.BASE_SPEED
                 elif event.key == pygame.K_DOWN:
-                    self.__player_y_speed_inc -= 1
+                    self.__player_y_speed_inc -= self.BASE_SPEED
                 elif event.key == pygame.K_UP:
-                    self.__player_y_speed_inc += 1
+                    self.__player_y_speed_inc += self.BASE_SPEED
                 elif event.key == pygame.K_LSHIFT:
                     self.__speed_booster = False
 
     def __update(self):
         """Update game instances."""
-        self.__game_state.update(
-            self.__player_speed_x_inc,
-            self.__player_y_speed_inc,
-            self.__speed_booster,
-        )
+        # to make game interaction quicker we wouldn't draw every update iteration
+        for _ in range(100):
+            self.__game_state.update(
+                self.__player_speed_x_inc,
+                self.__player_y_speed_inc,
+                self.__speed_booster,
+            )
 
     def render(self):
         """Render game instances."""
