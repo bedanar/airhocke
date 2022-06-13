@@ -18,6 +18,8 @@ def collide(first: playable.MovableObject, second: playable.MovableObject) -> No
     if sq_dist(first.pos, second.pos) > (first.radius + second.radius) ** 2:
         return
 
+    # IF YOU WANNA LIVE, DO NOT TOUCH REMAIN OF THE FUNCTION
+
     # calculationg vector between first and second objects
     main_axis_vector = Vector2(
         first.pos.x - second.pos.x, first.pos.y - second.pos.y)
