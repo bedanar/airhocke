@@ -3,6 +3,7 @@ import pygame
 
 from game_instances.playable import Player, Puck
 from game_instances.utils import collide
+from game_instances import interfaces
 
 from typing import Iterable
 
@@ -17,9 +18,9 @@ class GameState():
     PLAYER_MAGNITUDE = 0.75
     PLAYER_FRICTION = 0.001
 
-    PUCK_COLOR = pygame.color.Color(0, 0, 0)
+    PUCK_COLOR = pygame.color.Color(255, 255, 255)
     PUCK_RADIUS = 30
-    PUCK_WEIGHT = 2
+    PUCK_WEIGHT = 0.01
 
     SPEED_BOOST: float = 2.5
 
@@ -155,6 +156,7 @@ class Game():
         pygame.K_w: (0, -BASE_SPEED),
         pygame.K_s: (0, BASE_SPEED),
     }
+    FIELD_COLORING = interfaces.PlayingFieldColoring
 
     def __init__(self):
         """Init game instance."""
@@ -219,7 +221,8 @@ class Game():
 
     def __render(self):
         """Render game instances."""
-        self.__window.fill((0, 0, 255))
+        self.__window.fill((0, 0, 0))
+        self.FIELD_COLORING.draw(self.__window, (0, 0) + self.SIZE)
         for inst in self.__game_state.instances2draw:
             pygame.draw.circle(self.__window, *inst.draw_tuple())
         pygame.display.update()
