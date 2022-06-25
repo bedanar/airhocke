@@ -18,6 +18,7 @@ class MovableObject(metaclass=ABCMeta):
             field_borders: tuple[int | float, int | float, int | float, int | float],
             friction: float = 0.0001,
             weight: float = 1,
+            max_magnitude: float = 1.5,
     ):
         """Init player values."""
         self.pos = pygame.math.Vector2(x, y)
@@ -26,6 +27,7 @@ class MovableObject(metaclass=ABCMeta):
         self.radius = radius
         self.field_borders = field_borders
         self.friction = friction
+        self.max_magnitude = max_magnitude
         self.weight = weight
 
     def update(self):
@@ -62,17 +64,21 @@ class MovableObject(metaclass=ABCMeta):
 
 class Player(MovableObject):
     """Declare player class."""
-
+    
     def change(self, mov_x: int | float, mov_y: int | float):
         """Increase movement by given arguments."""
         self.movement.x += mov_x
         self.movement.y += mov_y
+        magnitude = self.movement.magnitude()
+        if magnitude > self.max_magnitude:
+            self.movement.x *= self.max_magnitude / magnitude
+            self.movement.y *= self.max_magnitude / magnitude
 
     def normalize(self):
         """Normalize values with borders."""
         collitions_numb = super().normalize()
         if collitions_numb:
-            self.movement *= 0.7
+            self.movement *= 0.5
 
 
 class Puck(MovableObject):

@@ -11,9 +11,16 @@ class GameState():
     """Class for managing game state."""
 
     FIRST_PLAYER_COLOR = pygame.color.Color(255, 0, 0)
-    FIRST_PLAYER_RADIUS = 50
+    PLAYER_RADIUS = 50
+    PLAYER_WEIGHT = 10
+    PLAYER_MAGNITUDE = 1.75
+    PLAYER_FRICTION = 0.01
+
     PUCK_COLOR = pygame.color.Color(0, 0, 0)
     PUCK_RADIUS = 30
+    PUCK_WEIGHT = 2
+
+    SPEED_BOOST: float = 2.5
 
     def __init__(
             self,
@@ -21,12 +28,14 @@ class GameState():
     ):
         """Init game state."""
         self.first_player: Player = Player(
-            100 - self.FIRST_PLAYER_RADIUS,
-            field_borders[3] / 2 - self.FIRST_PLAYER_RADIUS, 0, 0,
+            100 - self.PLAYER_RADIUS,
+            field_borders[3] / 2 - self.PLAYER_RADIUS, 0, 0,
             self.FIRST_PLAYER_COLOR,
-            self.FIRST_PLAYER_RADIUS,
+            self.PLAYER_RADIUS,
             field_borders,
-            weight=10,
+            friction=self.PLAYER_FRICTION,
+            weight=self.PLAYER_WEIGHT,
+            max_magnitude=self.PLAYER_MAGNITUDE,
         )
         self._first_boost: pygame.math.Vector2 = pygame.math.Vector2(0, 0)
         self._first_player_extra_boost: int = 0
@@ -36,6 +45,7 @@ class GameState():
             color=self.PUCK_COLOR,
             radius=self.PUCK_RADIUS,
             field_borders=field_borders,
+            weight=self.PUCK_WEIGHT,
         )
 
     @property
@@ -50,22 +60,30 @@ class GameState():
     def change_first_extra_boost(self) -> None:
         """Change first player extra boost."""
         self._first_player_extra_boost ^= 1
+        if self._first_player_extra_boost:
+            self.first_player.max_magnitude *= self.SPEED_BOOST
+        else:
+            self.first_player.max_magnitude /= self.SPEED_BOOST
 
     def update(self) -> None:
         """Update game state."""
-        self.first_player.change(self._first_boost.x, self._first_boost.y)
 
-        # If player under bost increase his speed three times
-        if self._first_player_extra_boost:
-            for _ in range(2):
-                self.first_player.change(
-                    self._first_boost.x, self._first_boost.y)
-
+        # Normal speed + speed_boost coef
+        self.first_player.change(
+                self._first_boost.x + self._first_player_extra_boost *\
+                        self._first_boost.x * (self.SPEED_BOOST - 1),
+                self._first_boost.y + self._first_player_extra_boost *\
+                        self._first_boost.x * (self.SPEED_BOOST - 1),
+        )
+        
+        # Collide everything with each other
         for find, fvalue in enumerate(self.instances2draw):
             for sind, svalue in enumerate(self.instances2draw):
                 if find >= sind:
                     continue
                 collide(fvalue, svalue)
+
+        # Update positions
         for mov_obj in self.instances2draw:
             mov_obj.update()
 
@@ -74,7 +92,8 @@ class Game():
     """Main game class."""
 
     SIZE = (1400, 768)
-    BASE_SPEED = 0.00035
+    BASE_SPEED = 0.03
+    UPDATES_PER_FRAME = 10
     MOVEMENT_CHANGE = {
         pygame.K_RIGHT: (BASE_SPEED, 0),
         pygame.K_LEFT: (-BASE_SPEED, 0),
@@ -133,7 +152,7 @@ class Game():
     def __update(self):
         """Update game instances."""
         # to make game interaction quicker we wouldn't draw every update iteration
-        for _ in range(50):
+        for _ in range(self.UPDATES_PER_FRAME):
             self.__game_state.update()
 
     def __render(self):
