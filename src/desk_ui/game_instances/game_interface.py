@@ -11,6 +11,7 @@ class GameState():
     """Class for managing game state."""
 
     FIRST_PLAYER_COLOR = pygame.color.Color(255, 0, 0)
+    SECOND_PLAYER_COLOR = pygame.color.Color(0, 255, 255)
     PLAYER_RADIUS = 50
     PLAYER_WEIGHT = 10
     PLAYER_MAGNITUDE = 1.75
@@ -27,6 +28,7 @@ class GameState():
             field_borders: tuple[int | float, int | float, int | float, int | float],
     ):
         """Init game state."""
+        # First player initialization
         self.first_player: Player = Player(
             100 - self.PLAYER_RADIUS,
             field_borders[3] / 2 - self.PLAYER_RADIUS, 0, 0,
@@ -37,8 +39,25 @@ class GameState():
             weight=self.PLAYER_WEIGHT,
             max_magnitude=self.PLAYER_MAGNITUDE,
         )
+        
+        # Second player initialization
+        self.second_player: Player = Player(
+            field_borders[2] - (100 - self.PLAYER_RADIUS),
+            field_borders[3] / 2 - self.PLAYER_RADIUS, 0, 0,
+            self.SECOND_PLAYER_COLOR,
+            self.PLAYER_RADIUS,
+            field_borders,
+            friction=self.PLAYER_FRICTION,
+            weight=self.PLAYER_WEIGHT,
+            max_magnitude=self.PLAYER_MAGNITUDE,
+        )
+
         self._first_boost: pygame.math.Vector2 = pygame.math.Vector2(0, 0)
-        self._first_player_extra_boost: int = 0
+        self._first_extra_boost: int = 0
+        
+        self._second_boost: pygame.math.Vector2 = pygame.math.Vector2(0, 0)
+        self._second_extra_boost: int = 0
+
         self.puck: Puck = Puck(
             field_borders[2] / 2 - self.PUCK_RADIUS,
             field_borders[3] / 2 - self.PUCK_RADIUS, 0, 0,
@@ -51,7 +70,7 @@ class GameState():
     @property
     def instances2draw(self) -> Iterable[Puck | Player]:
         """Return iterable object of all instances to draw."""
-        return self.first_player, self.puck
+        return self.first_player, self.second_player, self.puck
 
     def add_first_boost(self, x: int | float = 0, y: int | float = 0) -> None:
         """Change first player boost."""
@@ -59,21 +78,26 @@ class GameState():
 
     def change_first_extra_boost(self) -> None:
         """Change first player extra boost."""
-        self._first_player_extra_boost ^= 1
-        if self._first_player_extra_boost:
-            self.first_player.max_magnitude *= self.SPEED_BOOST
-        else:
-            self.first_player.max_magnitude /= self.SPEED_BOOST
+        # Changing state for first extra boost
+        self._first_extra_boost ^= 1
+        
+        # Koef for magnitude
+        koef = self.SPEED_BOOST
+        if not self._first_extra_boost:
+            koef = 1 / koef
+        
+        # Changin magnitude according to koef
+        self.first_player.max_magnitude *= koef
 
     def update(self) -> None:
         """Update game state."""
 
         # Normal speed + speed_boost coef
         self.first_player.change(
-                self._first_boost.x + self._first_player_extra_boost *\
+                self._first_boost.x + self._first_extra_boost *\
                         self._first_boost.x * (self.SPEED_BOOST - 1),
-                self._first_boost.y + self._first_player_extra_boost *\
-                        self._first_boost.x * (self.SPEED_BOOST - 1),
+                self._first_boost.y + self._first_extra_boost *\
+                        self._first_boost.y * (self.SPEED_BOOST - 1),
         )
         
         # Collide everything with each other
