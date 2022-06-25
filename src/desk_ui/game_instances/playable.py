@@ -71,16 +71,14 @@ class Player(MovableObject):
         self.movement.y += mov_y
         magnitude = self.movement.magnitude()
         if magnitude > self.max_magnitude:
-            print(f'Before: {self.movement}')
             self.movement.x *= self.max_magnitude / magnitude
             self.movement.y *= self.max_magnitude / magnitude
-            print(f'After: {self.movement}')
 
     def normalize(self):
         """Normalize values with borders."""
         collitions_numb = super().normalize()
         if collitions_numb:
-            self.movement *= 0.5
+            self.movement *= 0.8
 
 
 class Puck(MovableObject):

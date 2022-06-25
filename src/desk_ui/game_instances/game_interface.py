@@ -14,8 +14,8 @@ class GameState():
     SECOND_PLAYER_COLOR = pygame.color.Color(0, 255, 255)
     PLAYER_RADIUS = 50
     PLAYER_WEIGHT = 10
-    PLAYER_MAGNITUDE = 1.75
-    PLAYER_FRICTION = 0.01
+    PLAYER_MAGNITUDE = 0.75
+    PLAYER_FRICTION = 0.001
 
     PUCK_COLOR = pygame.color.Color(0, 0, 0)
     PUCK_RADIUS = 30
@@ -31,7 +31,7 @@ class GameState():
         # First player initialization
         self.first_player: Player = Player(
             100 - self.PLAYER_RADIUS,
-            field_borders[3] / 2 - self.PLAYER_RADIUS, 0, 0,
+            field_borders[3] / 2, 0, 0,
             self.FIRST_PLAYER_COLOR,
             self.PLAYER_RADIUS,
             field_borders,
@@ -43,7 +43,7 @@ class GameState():
         # Second player initialization
         self.second_player: Player = Player(
             field_borders[2] - (100 - self.PLAYER_RADIUS),
-            field_borders[3] / 2 - self.PLAYER_RADIUS, 0, 0,
+            field_borders[3] / 2, 0, 0,
             self.SECOND_PLAYER_COLOR,
             self.PLAYER_RADIUS,
             field_borders,
@@ -51,16 +51,18 @@ class GameState():
             weight=self.PLAYER_WEIGHT,
             max_magnitude=self.PLAYER_MAGNITUDE,
         )
-
+        
+        # Additional stuff for player movement
         self._first_boost: pygame.math.Vector2 = pygame.math.Vector2(0, 0)
         self._first_extra_boost: int = 0
         
         self._second_boost: pygame.math.Vector2 = pygame.math.Vector2(0, 0)
         self._second_extra_boost: int = 0
 
+        # Puck initialization
         self.puck: Puck = Puck(
-            field_borders[2] / 2 - self.PUCK_RADIUS,
-            field_borders[3] / 2 - self.PUCK_RADIUS, 0, 0,
+            field_borders[2] / 2,
+            field_borders[3] / 2, 0, 0,
             color=self.PUCK_COLOR,
             radius=self.PUCK_RADIUS,
             field_borders=field_borders,
@@ -89,6 +91,23 @@ class GameState():
         # Changin magnitude according to koef
         self.first_player.max_magnitude *= koef
 
+    def add_second_boost(self, x: int | float =0, y: int | float = 0) -> None:
+        """Change second player boost."""
+        self._second_boost += pygame.math.Vector2(x, y)
+
+    def change_second_extra_boost(self) -> None:
+        """Change second player extra boost."""
+        # Change state for second extra boost
+        self._second_extra_boost ^= 1
+        
+        # Koef for magnitude
+        koef = self.SPEED_BOOST
+        if not self._second_extra_boost:
+            koef = 1 / koef
+
+        # Changing magnitude acccording to koef
+        self.second_player.max_magnitude *= koef
+
     def update(self) -> None:
         """Update game state."""
 
@@ -98,6 +117,12 @@ class GameState():
                         self._first_boost.x * (self.SPEED_BOOST - 1),
                 self._first_boost.y + self._first_extra_boost *\
                         self._first_boost.y * (self.SPEED_BOOST - 1),
+        )
+        self.second_player.change(
+                self._second_boost.x + self._second_extra_boost *\
+                        self._second_boost.x * (self.SPEED_BOOST - 1),
+                self._second_boost.y + self._second_extra_boost *\
+                        self._second_boost.y * (self.SPEED_BOOST - 1),
         )
         
         # Collide everything with each other
@@ -116,13 +141,19 @@ class Game():
     """Main game class."""
 
     SIZE = (1400, 768)
-    BASE_SPEED = 0.03
-    UPDATES_PER_FRAME = 10
-    MOVEMENT_CHANGE = {
+    BASE_SPEED = 0.001
+    UPDATES_PER_FRAME = 50
+    ARROW_MOVEMENT_CHANGE = {
         pygame.K_RIGHT: (BASE_SPEED, 0),
         pygame.K_LEFT: (-BASE_SPEED, 0),
         pygame.K_UP: (0, -BASE_SPEED),
         pygame.K_DOWN: (0, BASE_SPEED),
+    }
+    WASD_MOVEMENT_CHANGE = {
+        pygame.K_d: (BASE_SPEED, 0),
+        pygame.K_a: (-BASE_SPEED, 0),
+        pygame.K_w: (0, -BASE_SPEED),
+        pygame.K_s: (0, BASE_SPEED),
     }
 
     def __init__(self):
@@ -159,20 +190,27 @@ class Game():
                     # changing extra boost
                     self.__game_state.change_first_extra_boost()
 
-                elif event.key in self.MOVEMENT_CHANGE:
+                elif event.key in self.ARROW_MOVEMENT_CHANGE:
                     # changing boost
                     self.__game_state.add_first_boost(
-                        *self.MOVEMENT_CHANGE[event.key])
+                        *self.ARROW_MOVEMENT_CHANGE[event.key])
+                elif event.key in self.WASD_MOVEMENT_CHANGE:
+                    # changing boost
+                    self.__game_state.add_second_boost(
+                        *self.WASD_MOVEMENT_CHANGE[event.key])
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LSHIFT:
                     # changing extra boost
                     self.__game_state.change_first_extra_boost()
 
-                elif event.key in self.MOVEMENT_CHANGE:
+                elif event.key in self.ARROW_MOVEMENT_CHANGE:
                     # changing boost
                     self.__game_state.add_first_boost(*map(
-                        lambda x: -x, self.MOVEMENT_CHANGE[event.key]))
-
+                        lambda x: -x, self.ARROW_MOVEMENT_CHANGE[event.key]))
+                elif event.key in self.WASD_MOVEMENT_CHANGE:
+                    # changin boost
+                    self.__game_state.add_second_boost(*map(
+                        lambda x: -x, self.WASD_MOVEMENT_CHANGE[event.key]))
     def __update(self):
         """Update game instances."""
         # to make game interaction quicker we wouldn't draw every update iteration
