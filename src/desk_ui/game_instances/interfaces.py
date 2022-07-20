@@ -41,7 +41,8 @@ class PlayingFieldColoring:
                 (right_down.x, (right_down.y - cls.GATES_SIZE) // 2), width=cls.LINE_WIDTH)
         pygame.draw.line(surface, cls.FIELD_COLORING, right_down,
                 (right_down.x, (right_down.y + cls.GATES_SIZE) // 2), width=cls.LINE_WIDTH)
-
+        
+        # Draw center circle
         pygame.draw.line(surface, cls.FIELD_COLORING, (right_up.x / 2, right_up.y),
                 (right_down.x / 2, right_down.y), width=cls.LINE_WIDTH)
 

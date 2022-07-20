@@ -6,8 +6,8 @@ authors = ["Yegor Shevchenko <egorhs19@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-pydantic = {extras = ["dotenv"], version = "^1.9.0"}
-loguru = "^0.6.0"
+aiohttp = {extras = ["speedups"], version = "^3.8.1"}
+cchardet = "^2.1.7"
 
 [tool.poetry.dev-dependencies]
 

@@ -1,8 +1,16 @@
-import logging
+from aiohttp import web
 
-print(logging.CRITICAL)
-# logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG)
-# logging.debug('This message should go to the log file')
-# logging.info('So should this')
-# logging.warning('And this, too')
-# logging.error('And non-ASCII stuff, too, like Øresund and Malmö')
+
+async def handle(request):
+    name = request.match_info.get('name', 'Anonymous')
+    text = f'Hello, {name}'
+    return web.Response(text=text)
+
+
+app = web.Application()
+app.add_routes([web.get('/', handle),
+        web.get('/{name}', handle),])
+
+
+if __name__ == '__main__':
+    web.run_app(app)
