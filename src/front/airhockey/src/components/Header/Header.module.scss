@@ -1,0 +1,27 @@
+.SignUpButton {
+  background-color: rgb(194, 0, 70);
+  border-radius: 30px;
+  padding-left: 30px;
+  padding-right: 30px;
+  font-size: 0.9rem;
+}
+
+.SignUpButton:hover {
+  background-color: rgb(194, 0, 70, 0.5);
+}
+
+.SignInButton {
+  background-color: rgb(0, 31, 194);
+  border-radius: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 0.9rem;
+}
+
+.SignInButton:hover {
+  background-color: rgba(0, 31, 194, 0.5);
+}
+
+.BurgerMenu {
+  background-color: rgb(194, 0, 70, 0.5);
+}

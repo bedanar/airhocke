@@ -1,9 +1,17 @@
+import BlurBallsBack from "./components/BlurBall";
+
+import { Routes, Route } from "react-router-dom";
+import Main from "./pages/Main";
+import NotFound from "./pages/NotFound";
+
 function App() {
   return (
-    <div className="App">
-      <div className="title"> Hello world</div>
-      <div className="description"> Sample description</div>
-    </div>
+    <BlurBallsBack>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BlurBallsBack>
   );
 }
 
