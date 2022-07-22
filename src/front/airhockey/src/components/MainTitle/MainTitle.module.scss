@@ -1,0 +1,58 @@
+.TitleText {
+  font-family: "PressStart";
+  text-align: center;
+  margin-top: 20vh;
+  font-size: 4rem;
+  color: white;
+  font-weight: 400;
+}
+
+$SquareSize: 0.8rem;
+
+.ButtonWrapper {
+  margin-top: 5vh;
+  display: flex;
+  justify-content: center;
+  .PlayButton {
+    position: relative;
+    font-family: "PressStart";
+    color: white;
+    border: 5px solid #c20046;
+    padding-left: 4rem;
+    padding-right: 4rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+
+    &:hover {
+      color: rgb(150, 150, 150);
+    }
+
+    .Square {
+      position: absolute;
+      background-color: #c20046;
+      width: $SquareSize;
+      height: $SquareSize;
+    }
+    .SquareFirst {
+      bottom: 0;
+      left: 0;
+    }
+    .SquareSecond {
+      bottom: 0;
+      left: $SquareSize;
+    }
+
+    .SquareThird {
+      left: 0;
+      bottom: $SquareSize;
+    }
+    .SquareFourth {
+      right: 0;
+      top: 0;
+    }
+    .SquareFifth {
+      right: $SquareSize;
+      top: 0;
+    }
+  }
+}

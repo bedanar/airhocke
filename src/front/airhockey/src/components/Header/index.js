@@ -13,9 +13,7 @@ export const menuList = [
 ];
 
 const classNames = (...classes) => {
-  const res = classes.join(" ");
-  console.log(res, classes);
-  return res;
+  return classes.join(" ");
 };
 
 const Header = () => {
@@ -26,7 +24,12 @@ const Header = () => {
           <div className="flex justify-start lg:w-0 lg:flex-1">
             <Link to="not_found">
               <span className="sr-only">Workflow</span>
-              <img className="ml-2 h-8 w-auto sm:h-10" src={logo} alt="" />
+              <img
+                className="ml-2 h-10 sm:h-10"
+                style={{ maxWidth: "4rem" }}
+                src={logo}
+                alt=""
+              />
             </Link>
           </div>
           <div className="-mr-2 -my-2 md:hidden">
