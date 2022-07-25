@@ -1,9 +1,13 @@
+* {
+  color: white;
+}
+
 @import "fonts";
 @import "tailwind";
 
 html {
   max-width: 100vw;
-  overflow: hidden;
+  // overflow: hidden;
 }
 
 .mono_text {

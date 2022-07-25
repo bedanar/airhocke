@@ -13,7 +13,7 @@ const PlayButton = () => {
     <div className={styles.ButtonWrapper}>
       <button className={styles.PlayButton}>
         {allSquares.map((sqStyle) => (
-          <div className={`${styles.Square} ${sqStyle}`}></div>
+          <div key={sqStyle} className={`${styles.Square} ${sqStyle}`}></div>
         ))}
         start game
       </button>
@@ -23,12 +23,10 @@ const PlayButton = () => {
 
 const MainTitle = () => {
   return (
-    <div className="relative z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 z-10">
-        <div className={styles.TitleText}>AIR HOCKEY</div>
-        <PlayButton />
-      </div>
-    </div>
+    <>
+      <div className={styles.TitleText}>AIR HOCKEY</div>
+      <PlayButton />
+    </>
   );
 };
 

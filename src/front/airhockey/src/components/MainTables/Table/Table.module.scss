@@ -1,0 +1,44 @@
+.TableWrapper {
+  padding-left: 2rem;
+  display: block;
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+  th,
+  td {
+    text-align: left;
+    font-family: "PT Mono";
+    font-weight: 400;
+    // font-size: 1rem;
+  }
+  tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .Title {
+    font-family: "PressStart";
+    font-size: 1rem;
+  }
+
+  .Table {
+    width: 100%;
+
+    margin-top: 2rem;
+    thead {
+      tr {
+        margin-bottom: 1.5rem;
+        th {
+          font-size: 1rem;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        padding-top: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+      }
+    }
+  }
+}

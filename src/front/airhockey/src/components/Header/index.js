@@ -18,7 +18,7 @@ const classNames = (...classes) => {
 
 const Header = () => {
   return (
-    <Popover className="relative z-10">
+    <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex justify-between items-center border-gray-100 py-6 md:justify-start md:space-x-10">
           <div className="flex justify-start lg:w-0 lg:flex-1">
@@ -77,7 +77,7 @@ const Header = () => {
         </div>
       </div>
       <BurgerMenu />
-    </Popover>
+    </>
   );
 };
 
