@@ -7,12 +7,12 @@ const Table = ({ title, description }) => {
     return (
       <tr>
         {order.map((el) => {
-          console.log(el, ind, description.values[ind][el]);
           return <td>{description.values[ind][el]}</td>;
         })}
       </tr>
     );
   };
+
   return (
     <div className={styles.TableWrapper}>
       <h1 className={styles.Title}> {title}</h1>

@@ -5,9 +5,10 @@
 @import "fonts";
 @import "tailwind";
 
-html {
+body {
   max-width: 100vw;
-  // overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .mono_text {
