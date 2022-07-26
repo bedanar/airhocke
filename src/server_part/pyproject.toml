@@ -8,8 +8,14 @@ authors = ["Yegor Shevchenko <egorhs19@gmail.com>"]
 python = "^3.10"
 aiohttp = {extras = ["speedups"], version = "^3.8.1"}
 cchardet = "^2.1.7"
+asyncpg = "^0.26.0"
+pydantic = {extras = ["dotenv"], version = "^1.9.1"}
 
 [tool.poetry.dev-dependencies]
+mypy = "^0.971"
+pydocstyle = "^6.1.1"
+flake8 = "^4.0.1"
+autopep8 = "^1.6.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
