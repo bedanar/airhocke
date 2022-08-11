@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/static/css/main.ee167e50.css",
+    "main.js": "/static/js/main.a08d4945.js",
+    "static/js/787.2336d8c3.chunk.js": "/static/js/787.2336d8c3.chunk.js",
+    "static/media/PTMono-Regular.ttf": "/static/media/PTMono-Regular.295a1f32faf05a5784d8.ttf",
+    "static/media/PressStart2P-Regular.ttf": "/static/media/PressStart2P-Regular.21503c6a5385ab41dde9.ttf",
+    "static/media/ice-hockey.png": "/static/media/ice-hockey.d6984c0db859fcb9a2b0.png",
+    "index.html": "/index.html",
+    "main.ee167e50.css.map": "/static/css/main.ee167e50.css.map",
+    "main.a08d4945.js.map": "/static/js/main.a08d4945.js.map",
+    "787.2336d8c3.chunk.js.map": "/static/js/787.2336d8c3.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ee167e50.css",
+    "static/js/main.a08d4945.js"
+  ]
+}
