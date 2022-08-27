@@ -1,3 +1,4 @@
+import Pagination from "../../Pagination";
 import styles from "./Table.module.scss";
 
 const Table = ({ title, description }) => {
@@ -26,6 +27,9 @@ const Table = ({ title, description }) => {
         </thead>
         <tbody>{description.values.map((_, ind) => getRaw(ind))}</tbody>
       </table>
+      <div className={styles.table__pagination}>
+        <Pagination numbers={5} color={""} />
+      </div>
     </div>
   );
 };

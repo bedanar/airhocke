@@ -3,6 +3,7 @@
   display: block;
   margin-top: 5rem;
   margin-bottom: 5rem;
+  position: relative;
   th,
   td {
     text-align: left;
@@ -41,4 +42,9 @@
       }
     }
   }
+}
+.table__pagination {
+  position: absolute;
+  right: 0;
+  bottom: -75px;
 }

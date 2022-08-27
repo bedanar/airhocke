@@ -1,17 +1,16 @@
-import BlurBallsBack from "./components/BlurBall";
-
 import { Routes, Route } from "react-router-dom";
 import Main from "./pages/Main";
 import NotFound from "./pages/NotFound";
+import Layout from "./components/Layout";
 
 function App() {
   return (
-    <BlurBallsBack>
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BlurBallsBack>
+    <Layout>
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+    </Layout>
   );
 }
 
