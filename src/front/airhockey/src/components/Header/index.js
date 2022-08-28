@@ -16,7 +16,7 @@ const classNames = (...classes) => {
   return classes.join(" ");
 };
 
-const Header = () => {
+const Header = ({isAuth = false}) => {
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -54,7 +54,8 @@ const Header = () => {
               </Link>
             ))}
           </Popover.Group>
-          <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
+         {
+          !isAuth &&  <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
             <Link
               to="#"
               className={classNames(
@@ -74,6 +75,10 @@ const Header = () => {
               Sign up
             </Link>
           </div>
+         }
+         {
+          isAuth && <button className={styles.header__profile}>My profile</button>
+         }
         </div>
       </div>
       <BurgerMenu />

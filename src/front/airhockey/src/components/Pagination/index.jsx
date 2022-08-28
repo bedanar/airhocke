@@ -12,7 +12,12 @@ const Pagination = ({color, numbers}) => {
         setIsActive(ind + 1)
     }
     const handleBackward = (ind) => {
-        setIsActive(ind - 1)
+        if(ind > 0) {
+            setIsActive(ind - 1)
+        }
+        if (ind < 0) {
+            setIsActive(0)
+        }
     }
     return (
         <div className={styles.pagination}>

@@ -1,0 +1,58 @@
+.profile {
+    display: grid;
+    grid-template-columns: 3fr 9fr;
+    gap: 96px;
+    font-family: 'PT Mono';
+    height: 90vh;
+}
+.profile__image {
+    width: 255px;
+    height: 255px;
+    border: 10px solid #C20046;
+    position: relative;
+    border-radius: 50%;
+}
+.profile__image img {
+    position: absolute;
+    left: 10%;
+    bottom: -8px;
+    z-index: -1;
+}
+.profile__rating {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    font-size: 30px;
+    line-height: 30px;
+    font-family: 'PressStart';
+}
+.profile__username {
+    margin: 40px 0;
+    font-family: 'PressStart';
+    font-weight: 400;
+    font-size: 30px;
+    color: #FFFFFF;
+}
+.profile__stars {
+    display: flex;
+    align-items: center;
+}
+.profile__star:not(:last-child) {
+    margin-right: 14px;
+}
+.profile__games {
+    margin-top: 27px;
+    margin-bottom: 57px;
+    font-size: 20px;
+    line-height: 26px;
+    color: #FFFFFF;
+}
+.profile__inviteBtn {
+    background: #001FC2;
+    border-radius: 40px;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 24px;
+    padding: 22px 46px;
+
+}
